@@ -3,7 +3,7 @@
 In this repository, we provide the code for the simulations of the following manuscript: <br> <br>
 
 
-[ <strong> Online Regulation of Unstable LTI Systems from a Single Trajectory </strong> ](https://128.84.21.199/abs/2006.00125)
+### [Online Regulation of Unstable LTI Systems from a Single Trajectory](https://128.84.21.199/abs/2006.00125)
 
 Shahriar Talebi, Siavash Alemzadeh, Newsha Rahimi, Mehran Mesbahi <br> <br>
 
