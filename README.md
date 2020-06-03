@@ -6,7 +6,7 @@ In this repository, we provide the code for the simulations of the following man
 
 ### [Online Regulation of Unstable LTI Systems from a Single Trajectory](https://128.84.21.199/abs/2006.00125)
 
-Shahriar Talebi, Siavash Alemzadeh, Newsha Rahimi, Mehran Mesbahi <br> <br>
+Shahriar Talebi, Siavash Alemzadeh, Niyousha Rahimi, Mehran Mesbahi <br> <br>
 
 
 ---
