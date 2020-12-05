@@ -1,7 +1,7 @@
 # Data-Guided Regulation (DGR)
 
 
-In this repository, we provide the code for the simulations of the following manuscript: <br> <br>
+In this repository, we provide the code for the simulations of the following manuscript:  <br> <br>
 
 
 ### [Online Regulation of Unstable LTI Systems from a Single Trajectory](https://128.84.21.199/abs/2006.00125)
