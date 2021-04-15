@@ -429,16 +429,16 @@ def plots_traj(XX, XF, X_update, XX_deepc, XX_deepc_dgr, up_a, xposition, K, mod
         line1.append(0)
         line1[i], = ax.plot(XX[i,:], alpha=0.35, label=lb[i])
     
-    l4, = ax.plot(list(range(xposition, X_update.shape[1])), la.norm(X_update[:, xposition:], axis=0), color='b', linewidth=2.5, label='$\\|x_t\\|$ LQR for $\hat{A}$')
-    l1, = ax.plot(la.norm(XX, axis=0), color='k', linewidth=2.5, label='$\\|x_t\\|$ DGR ON')
-    l2, = ax.plot(la.norm(XF, axis=0), color='r', linewidth=2.5, label='$\\|x_t\\|$ DGR OFF')
+    l4, = ax.plot(list(range(xposition, X_update.shape[1])), la.norm(X_update[:, xposition:], axis=0), color='b', linewidth=2.5, label='$\\||x_t\\||$ LQR for $\hat{A}$')
+    l1, = ax.plot(la.norm(XX, axis=0), color='k', linewidth=2.5, label='$\\||x_t\\||$ DGR ON')
+    l2, = ax.plot(la.norm(XF, axis=0), color='r', linewidth=2.5, label='$\\||x_t\\||$ DGR OFF')
     l3, = ax.plot(up_a, color='g', linewidth=2.5, label='Upper Bound')
-    l5, = ax.plot(la.norm(XX_deepc, axis=0), color='c', linewidth=2.5, label='DeePC')
     l7, = ax.plot(list(range(xposition, XX_deepc_dgr.shape[1])), la.norm(XX_deepc_dgr[:, xposition:], axis=0), color='orange', linewidth=2.5, label='DGR+DeePC', linestyle='-.')
+    l5, = ax.plot(la.norm(XX_deepc, axis=0), color='c', linewidth=2.5, label='Offline data+DeePC')
 
     box = ax.get_position()
     
-    first_legend = plt.legend(handles=[l1, l2, l3, l4, l5, l7], loc='upper right',prop={'size': 24})
+    first_legend = plt.legend(handles=[l1, l2, l3, l4, l7, l5], loc='upper right',prop={'size': 24})
     leg = plt.gca().add_artist(first_legend)
     
     second_legend = plt.legend(handles=line1, prop={'size': 24}, loc='lower right', bbox_to_anchor=(0.98, 0.2), borderaxespad=0)
@@ -507,7 +507,8 @@ if __name__ == "__main__":
                   'The state trajectory of X-29 in ND-UA mode with and without DGR \n for Lateral-directional control']
     
     for control_mode in range(len(mode)):
-        
+        print('control mode:')
+        print(control_mode)
         A = dynamics_A[control_mode]
         B = dynamics_B[control_mode]
     
@@ -564,3 +565,4 @@ if __name__ == "__main__":
         plots_traj(np.hstack(x_a), np.hstack(x_fre), np.hstack(x_update), np.hstack(x_deepc), np.hstack(x_deepc_dgr), up_a, xposition, K, mode[control_mode], mode_title[control_mode])
 
     plot_controller(final_K, ideal_K)
+    print('The parameters for DGR+DeePC must be adjusted for each specific instance of perturbation.')
