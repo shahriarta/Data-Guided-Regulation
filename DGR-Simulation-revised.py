@@ -26,6 +26,29 @@ rc('font',**{'family':'sans-serif','sans-serif':['Helvetica']})
 #rc('font',**{'family':'serif','serif':['Palatino']})
 rc('text', usetex=True)
 
+linestyle_str = [
+     ('solid', 'solid'),      # Same as (0, ()) or '-'
+     ('dotted', 'dotted'),    # Same as (0, (1, 1)) or ':'
+     ('dashed', 'dashed'),    # Same as '--'
+     ('dashdot', 'dashdot')]  # Same as '-.'
+
+linestyle_tuple = {
+     'loosely dotted':        (0, (1, 10)),
+     'dotted':                (0, (1, 1)),
+     'densely dotted':        (0, (1, 1)),
+
+     'loosely dashed':        (0, (5, 10)),
+     'dashed':                (0, (5, 5)),
+     'densely dashed':        (0, (5, 1)),
+
+     'loosely dashdotted':    (0, (3, 10, 1, 10)),
+     'dashdotted':            (0, (3, 5, 1, 5)),
+     'densely dashdotted':    (0, (3, 1, 1, 1)),
+
+     'dashdotdotted':         (0, (3, 5, 1, 5, 1, 5)),
+     'loosely dashdotdotted': (0, (3, 10, 1, 10, 1, 10)),
+     'densely dashdotdotted': (0, (3, 1, 1, 1, 1, 1))}
+
 
 def data2hankel(data,L):
     # the input is is a list of column vectors
@@ -429,16 +452,16 @@ def plots_traj(XX, XF, X_update, XX_deepc, XX_deepc_dgr, up_a, xposition, K, mod
         line1.append(0)
         line1[i], = ax.plot(XX[i,:], alpha=0.35, label=lb[i])
     
-    l4, = ax.plot(list(range(xposition, X_update.shape[1])), la.norm(X_update[:, xposition:], axis=0), color='b', linewidth=2.5, label='$\\||x_t\\||$ LQR for $\hat{A}$')
+    l4, = ax.plot(list(range(xposition, X_update.shape[1])), la.norm(X_update[:, xposition:], axis=0), color='b', linewidth=2.5, label='$\\||x_t\\||$ LQR for $\hat{A}$', linestyle='--')
     l1, = ax.plot(la.norm(XX, axis=0), color='k', linewidth=2.5, label='$\\||x_t\\||$ DGR ON')
-    l2, = ax.plot(la.norm(XF, axis=0), color='r', linewidth=2.5, label='$\\||x_t\\||$ DGR OFF')
-    l3, = ax.plot(up_a, color='g', linewidth=2.5, label='Upper Bound')
+    l2, = ax.plot(la.norm(XF, axis=0), color='r', linewidth=2.5, label='$\\||x_t\\||$ DGR OFF', linestyle=':')
+    l3, = ax.plot(up_a, color='g', linewidth=2.5, label='Upper Bound', linestyle=linestyle_tuple['densely dashdotdotted'])
     l7, = ax.plot(list(range(xposition, XX_deepc_dgr.shape[1])), la.norm(XX_deepc_dgr[:, xposition:], axis=0), color='orange', linewidth=2.5, label='DGR+DeePC', linestyle='-.')
-    l5, = ax.plot(la.norm(XX_deepc, axis=0), color='c', linewidth=2.5, label='Offline data+DeePC')
+    l5, = ax.plot(la.norm(XX_deepc, axis=0), color='c', linewidth=2.5, label='Offline data+DeePC', linestyle=linestyle_tuple['densely dashdotted'])
 
     box = ax.get_position()
     
-    first_legend = plt.legend(handles=[l1, l2, l3, l4, l7, l5], loc='upper right',prop={'size': 24})
+    first_legend = plt.legend(handles=[l1, l2, l3, l4, l7, l5], loc='upper right', prop={'size': 24})
     leg = plt.gca().add_artist(first_legend)
     
     second_legend = plt.legend(handles=line1, prop={'size': 24}, loc='lower right', bbox_to_anchor=(0.98, 0.2), borderaxespad=0)
@@ -460,13 +483,13 @@ def plots_traj(XX, XF, X_update, XX_deepc, XX_deepc_dgr, up_a, xposition, K, mod
     
     ax2.set_title('zoom in', size=25)
     ax2.set(ylim=([-0.5, 4]), xlim=([xposition-5, 80]))
-    ax2.plot(up_a, color='g', linewidth=2.5, label='Upper Bound')
-    ax2.plot(list(range(xposition, X_update.shape[1])), la.norm(X_update[:, xposition:], axis=0), color='b', linewidth=2.5)
+    ax2.plot(up_a, color='g', linewidth=2.5, label='Upper Bound', linestyle=linestyle_tuple['densely dashdotdotted'])
+    ax2.plot(list(range(xposition, X_update.shape[1])), la.norm(X_update[:, xposition:], axis=0), color='b', linewidth=2.5, linestyle='--')
     ax2.plot(la.norm(XX, axis=0), color='k', linewidth=2.5)
     ax2.plot(list(range(xposition, XX_deepc_dgr.shape[1])), la.norm(XX_deepc_dgr[:, xposition:], axis=0), color='orange', linewidth=2.5, label='DGR+DeePC', linestyle='-.')
     
     line1 = []
-    lb = ['$u$', '$w$', '$q$', '$\\theta$',   '$v$',  '$p$', '$r$', '$\phi$']
+    lb = ['$u$', '$w$', '$q$', '$\\theta$',   '$v$',  '$p$', '$r$', '$\\phi$']
     for i in range(n):
         line1.append(0)
         line1[i], = ax2.plot(XX[i,:], alpha=0.35, label=lb[i])
@@ -484,13 +507,16 @@ def plot_controller(K_list, ideal_K):
 
     plt.figure(figsize=(13, 10))
 
+    stylelist = ['-', '-.', '--', ':']
     for i in range(K_list.__len__()):
-        plt.plot(list(map(lambda s: np.max(np.abs(s - ideal_K[i])), K_list[i])))
+        plt.plot(list(map(lambda s: la.norm(s - ideal_K[i], np.inf)/la.norm(K_list[i][0] - ideal_K[i], np.inf), K_list[i])), linestyle=stylelist[i])
     leg = ['Longitudinal-ND-PA', 'Lateral_directional-ND-PA','Longitudinal-ND-UA', 'Lateral_directional-ND-UA']
-    plt.legend(leg,prop={'size': 24})
+    plt.legend(leg, prop={'size': 24})
     plt.yscale('log')
+    plt.grid()
     plt.xlabel('Iteration $t$', fontsize=30)
-    plt.ylabel('$||K_t - G_\\alpha A||_{\\infty}$', fontsize=30)
+    plt.ylabel('$\\frac{||K_t - G_\\alpha A||_{\\infty}}{||K_0 - G_\\alpha A||_{\\infty}}$', fontsize=40)
+    plt.tight_layout(pad=0.1)
         
 ################################ Main ################################
 
